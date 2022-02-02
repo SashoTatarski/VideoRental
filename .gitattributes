@@ -2,6 +2,7 @@
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
 * text=auto
+* .JavaScript linguist-detectable=false
 
 ###############################################################################
 # Set default behavior for command prompt diff.
@@ -62,4 +63,3 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 
-*.JavaScript linguist-detectable=false
