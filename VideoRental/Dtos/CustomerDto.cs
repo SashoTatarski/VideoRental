@@ -18,7 +18,7 @@ namespace VideoRental.Dtos
         public byte MembershipTypeId { get; set; }
 
         [Column(TypeName = "Date")]
-        [Min18YearsIfAMember]
+        //[Min18YearsIfAMember]
         public DateTime? Birthdate { get; set; }
     }
 }
