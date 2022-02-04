@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using System;
-using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using VideoRental.Dtos;
 using VideoRental.Models;
 
-namespace VideoRental.Controllers.Api
+namespace Vidly.Controllers.Api
 {
     public class CustomersController : ApiController
     {
@@ -18,15 +16,24 @@ namespace VideoRental.Controllers.Api
         {
             _context = new ApplicationDbContext();
         }
+
         // GET /api/customers
-        public IHttpActionResult GetCustomers()
+        public IHttpActionResult GetCustomers(string query = null)
         {
-            var customerDtos = _context.Customers.ToList().Select(Mapper.Map<Customer, CustomerDto>);
+            var customersQuery = _context.Customers
+                .Include(c => c.MembershipType);
+
+            if (!String.IsNullOrWhiteSpace(query))
+                customersQuery = customersQuery.Where(c => c.Name.Contains(query));
+
+            var customerDtos = customersQuery
+                .ToList()
+                .Select(Mapper.Map<Customer, CustomerDto>);
 
             return Ok(customerDtos);
         }
 
-        //GET /api/customers/1
+        // GET /api/customers/1
         public IHttpActionResult GetCustomer(int id)
         {
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
@@ -49,7 +56,6 @@ namespace VideoRental.Controllers.Api
             _context.SaveChanges();
 
             customerDto.Id = customer.Id;
-
             return Created(new Uri(Request.RequestUri + "/" + customer.Id), customerDto);
         }
 
@@ -60,7 +66,7 @@ namespace VideoRental.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var customerInDb = _context.Customers.Single(c => c.Id == id);
+            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
 
             if (customerInDb == null)
                 return NotFound();
