@@ -20,7 +20,8 @@ namespace VideoRental.Controllers
         {
             _context.Dispose();
         }
-        
+
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Delete(int id)
         {
             var movieInDb = _context.Movies.Single(c => c.Id == id);
@@ -32,11 +33,15 @@ namespace VideoRental.Controllers
         }
         public ViewResult Index()
         {
-            var movies = _context.Movies.Include(m => m.Genre).ToList();
+            var viewModel = _context.Movies.Include(m => m.Genre).ToList();
 
-            return View(movies);
+            if (User.IsInRole(RoleName.CanManageMovies))
+                return View("List", viewModel);
+
+            return View("ReadOnlyList", viewModel);
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult New()
         {
             var genres = _context.Genres.ToList();
@@ -48,6 +53,7 @@ namespace VideoRental.Controllers
             return View("MovieForm", viewModel);
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Edit(int id)
         {
             var movie = _context.Movies.SingleOrDefault(c => c.Id == id);
@@ -56,7 +62,7 @@ namespace VideoRental.Controllers
                 return HttpNotFound();
 
             var viewModel = new MovieFormViewModel(movie)
-            {                
+            {
                 Genres = _context.Genres.ToList()
             };
             return View("MovieForm", viewModel);
@@ -64,6 +70,7 @@ namespace VideoRental.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Save(Movie movie)
         {
             if (!ModelState.IsValid)
@@ -87,14 +94,14 @@ namespace VideoRental.Controllers
                 movieInDb.NumberInStock = movie.NumberInStock;
             }
 
-            
-            _context.SaveChanges();          
+
+            _context.SaveChanges();
 
 
             return RedirectToAction("Index", "Movies");
         }
 
-        
+
 
 
         public ActionResult Details(int id)
