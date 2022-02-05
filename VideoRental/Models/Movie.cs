@@ -31,5 +31,7 @@ namespace VideoRental.Models
         [Range(1, 10)]
         public byte NumberInStock { get; set; }
 
+        public byte NumberAvailable { get; set; }
+
     }
 }

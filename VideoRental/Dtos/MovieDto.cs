@@ -13,18 +13,19 @@ namespace VideoRental.Dtos
 
         [Required]
         [StringLength(255)]
-        public string Name { get; set; }       
+        public string Name { get; set; }
 
         [Required]
         public byte GenreId { get; set; }
 
         [Column(TypeName = "Date")]
         public DateTime DateAdded { get; set; }
-        
+
         [Column(TypeName = "Date")]
         public DateTime ReleaseDate { get; set; }
-        
+
         [Range(1, 10)]
         public byte NumberInStock { get; set; }
+        
     }
 }

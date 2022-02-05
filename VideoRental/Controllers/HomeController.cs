@@ -1,10 +1,12 @@
 ﻿using System.Web.Mvc;
+using System.Web.UI;
 
 namespace VideoRental.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
-        [AllowAnonymous]
+        [OutputCache(Duration = 50, Location = OutputCacheLocation.Server, VaryByParam = "genre")]
         public ActionResult Index()
         {
             return View();
